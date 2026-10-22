@@ -18,6 +18,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.13"
+          enable-cache: false
       - uses: ./.github/actions/setup-uip
 
       - name: Smoke test the triage rules
@@ -33,10 +34,10 @@ jobs:
         run: |
           uip login --authority "${{ vars.UIP_AUTHORITY }}" --organization "${{ vars.UIP_ORG }}" \
             --tenant "${{ vars.UIP_TENANT }}" --client-id env.UIP_CLIENT_ID \
-            --client-secret env.UIP_CLIENT_SECRET --scope "${{ vars.UIP_SCOPES }}" --output json | jq '{Result, Code}'
+            --client-secret env.UIP_CLIENT_SECRET --scope "${{ vars.UIP_SCOPES }}" --output json | jq -e '.Result == "Success"' >/dev/null
 
       - name: Pack dry run
-        run: uip solution pack solutions/CicdDemo --dry-run --output json | jq '{Result, Code, Message}'
+        run: uip solution pack solutions/CicdDemo --dry-run --output json | tee pack.json | jq '{Result, Code, Message}'; jq -e '.Result == "Success"' pack.json >/dev/null
 
   promotion:
     name: Promotion PR points at a built version

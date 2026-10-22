@@ -13,7 +13,7 @@ PARENT_FOLDER="${PARENT_FOLDER:-Shared}"
 echo "::group::Login to ${UIP_ORG}/${UIP_TENANT} as external app"
 uip login --authority "$UIP_AUTHORITY" --organization "$UIP_ORG" --tenant "$UIP_TENANT" \
   --client-id env.UIP_CLIENT_ID --client-secret env.UIP_CLIENT_SECRET \
-  --scope "$UIP_SCOPES" --output json | jq '{Result, Code}'
+  --scope "$UIP_SCOPES" --output json | jq -e '.Result == "Success"' >/dev/null
 uip login status --output json | jq '.Data | {Identity, IdentityType, Tenant}'
 echo "::endgroup::"
 
