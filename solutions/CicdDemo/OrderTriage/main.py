@@ -2,10 +2,10 @@ from langgraph.graph import START, StateGraph, END
 from pydantic import BaseModel
 
 # Bump this in a PR to show a change flowing DEV -> TEST -> PROD.
-RULES_VERSION = "1"
+RULES_VERSION = "2"
 
 HIGH_VALUE_EUR = 10_000
-EXPRESS_COUNTRIES = {"DE", "AT", "RO"}
+EXPRESS_COUNTRIES = {"DE", "AT", "RO", "NL"}
 
 
 class GraphState(BaseModel):
