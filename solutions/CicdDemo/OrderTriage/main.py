@@ -5,7 +5,7 @@ from pydantic import BaseModel
 RULES_VERSION = "2"
 
 HIGH_VALUE_EUR = 10_000
-EXPRESS_COUNTRIES = {"DE", "AT", "RO", "NL"}
+EXPRESS_COUNTRIES = {"DE", "AT", "RO", "NL", "EN"}
 
 
 class GraphState(BaseModel):
