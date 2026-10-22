@@ -11,6 +11,7 @@ CASES = [
     ({"order_id": "A-1", "amount_eur": 12500, "country": "DE"}, ("high", "manual-review")),
     ({"order_id": "A-2", "amount_eur": 300, "country": "ro"}, ("normal", "express")),
     ({"order_id": "A-3", "amount_eur": 300, "country": "FR"}, ("normal", "standard")),
+    ({"order_id": "A-4", "amount_eur": 300, "country": "NL"}, ("normal", "express")),
 ]
 
 failed = 0
