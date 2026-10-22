@@ -1,0 +1,97 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "agent",
+            "uniqueId": "43a1035a-7c79-4ec4-952e-c5c70b33fc88",
+            "type": "agent",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "order_id": {
+                        "title": "Order Id",
+                        "type": "string"
+                    },
+                    "amount_eur": {
+                        "title": "Amount Eur",
+                        "type": "number"
+                    },
+                    "country": {
+                        "title": "Country",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "order_id",
+                    "amount_eur",
+                    "country"
+                ]
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "order_id": {
+                        "title": "Order Id",
+                        "type": "string"
+                    },
+                    "priority": {
+                        "title": "Priority",
+                        "type": "string"
+                    },
+                    "route": {
+                        "title": "Route",
+                        "type": "string"
+                    },
+                    "rules_version": {
+                        "title": "Rules Version",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "order_id",
+                    "priority",
+                    "route",
+                    "rules_version"
+                ]
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "__start__",
+                        "name": "__start__",
+                        "type": "__start__",
+                        "subgraph": null,
+                        "metadata": {}
+                    },
+                    {
+                        "id": "triage",
+                        "name": "triage",
+                        "type": "node",
+                        "subgraph": null,
+                        "metadata": {}
+                    },
+                    {
+                        "id": "__end__",
+                        "name": "__end__",
+                        "type": "__end__",
+                        "subgraph": null,
+                        "metadata": {}
+                    }
+                ],
+                "edges": [
+                    {
+                        "source": "__start__",
+                        "target": "triage",
+                        "label": null
+                    },
+                    {
+                        "source": "triage",
+                        "target": "__end__",
+                        "label": null
+                    }
+                ]
+            }
+        }
+    ]
+}

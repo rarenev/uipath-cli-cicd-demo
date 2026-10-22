@@ -1,0 +1,5 @@
+# What runs in DEV. The build workflow updates this file after every merge to main.
+tenant: CicdDev
+parentFolder: Shared
+solutions:
+  CicdDemo: { version: "0.0.0", deployment: CicdDemo-dev }

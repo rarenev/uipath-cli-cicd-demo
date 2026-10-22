@@ -1,0 +1,5 @@
+# What runs in TEST. Change the version only through a promotion PR.
+tenant: CicdTest
+parentFolder: Shared
+solutions:
+  CicdDemo: { version: "0.0.0", deployment: CicdDemo-test }

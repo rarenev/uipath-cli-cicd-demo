@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "OrderTriage",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1111ebf8-b9c0-42ec-8733-0048729b948b",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "OrderTriage"
+    },
+    "locks": [],
+    "key": "3a2e6a85-51fd-48fb-8cfa-defcbe823a9d",
+    "files": []
+  }
+}

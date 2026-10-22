@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "OrderTriage",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1111ebf8-b9c0-42ec-8733-0048729b948b",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "OrderTriage"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "OrderTriage",
+      "package": {
+        "key": "3a2e6a85-51fd-48fb-8cfa-defcbe823a9d"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n    \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n    \"$id\": \"entry-points.json\",\n    \"entryPoints\": [\n        {\n            \"filePath\": \"agent\",\n            \"uniqueId\": \"43a1035a-7c79-4ec4-952e-c5c70b33fc88\",\n            \"type\": \"agent\",\n            \"input\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"order_id\": {\n                        \"title\": \"Order Id\",\n                        \"type\": \"string\"\n                    },\n                    \"amount_eur\": {\n                        \"title\": \"Amount Eur\",\n                        \"type\": \"number\"\n                    },\n                    \"country\": {\n                        \"title\": \"Country\",\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"order_id\",\n                    \"amount_eur\",\n                    \"country\"\n                ]\n            },\n            \"output\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"order_id\": {\n                        \"title\": \"Order Id\",\n                        \"type\": \"string\"\n                    },\n                    \"priority\": {\n                        \"title\": \"Priority\",\n                        \"type\": \"string\"\n                    },\n                    \"route\": {\n                        \"title\": \"Route\",\n                        \"type\": \"string\"\n                    },\n                    \"rules_version\": {\n                        \"title\": \"Rules Version\",\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [\n                    \"order_id\",\n                    \"priority\",\n                    \"route\",\n                    \"rules_version\"\n                ]\n            },\n            \"graph\": {\n                \"nodes\": [\n                    {\n                        \"id\": \"__start__\",\n                        \"name\": \"__start__\",\n                        \"type\": \"__start__\",\n                        \"subgraph\": null,\n                        \"metadata\": {}\n                    },\n                    {\n                        \"id\": \"triage\",\n                        \"name\": \"triage\",\n                        \"type\": \"node\",\n                        \"subgraph\": null,\n                        \"metadata\": {}\n                    },\n                    {\n                        \"id\": \"__end__\",\n                        \"name\": \"__end__\",\n                        \"type\": \"__end__\",\n                        \"subgraph\": null,\n                        \"metadata\": {}\n                    }\n                ],\n                \"edges\": [\n                    {\n                        \"source\": \"__start__\",\n                        \"target\": \"triage\",\n                        \"label\": null\n                    },\n                    {\n                        \"source\": \"triage\",\n                        \"target\": \"__end__\",\n                        \"label\": null\n                    }\n                ]\n            }\n        }\n    ]\n}",
+      "entryPointName": "agent",
+      "entryPointUniqueId": "43a1035a-7c79-4ec4-952e-c5c70b33fc88"
+    },
+    "locks": [],
+    "key": "57404528-7a0a-4acf-be6f-705a76651f79",
+    "files": []
+  }
+}

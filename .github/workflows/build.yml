@@ -1,0 +1,75 @@
+# Stage 2: merge to main that changes the solution. Build once, store, deploy to DEV,
+# then open the promotion PR for TEST.
+name: build
+
+on:
+  push:
+    branches: [main]
+    paths: ["solutions/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: build-main
+
+jobs:
+  build:
+    name: Pack and store
+    runs-on: ubuntu-latest
+    environment: dev
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - uses: ./.github/actions/setup-uip
+
+      - id: v
+        run: echo "version=1.0.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Login as cicd-dev
+        env:
+          UIP_CLIENT_ID: ${{ secrets.UIP_CLIENT_ID }}
+          UIP_CLIENT_SECRET: ${{ secrets.UIP_CLIENT_SECRET }}
+        run: |
+          uip login --authority "${{ vars.UIP_AUTHORITY }}" --organization "${{ vars.UIP_ORG }}" \
+            --tenant "${{ vars.UIP_TENANT }}" --client-id env.UIP_CLIENT_ID \
+            --client-secret env.UIP_CLIENT_SECRET --scope "${{ vars.UIP_SCOPES }}" --output json | jq '{Result, Code}'
+
+      - name: Pack with a fixed version
+        run: |
+          uip solution pack solutions/CicdDemo out -n CicdDemo -v "${{ steps.v.outputs.version }}" \
+            --output json | jq '{Result, Code, Message}'
+          ls -la out
+
+      - name: Store the package as a GitHub release (the artifact store)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "cicddemo-v${{ steps.v.outputs.version }}" out/*.zip \
+            --title "CicdDemo ${{ steps.v.outputs.version }}" \
+            --notes "Built from ${{ github.sha }} by run ${{ github.run_id }}."
+
+  deploy-dev:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      env_name: dev
+      version: ${{ needs.build.outputs.version }}
+    secrets: inherit
+
+  promote-to-test:
+    name: Record DEV and open the TEST promotion PR
+    needs: [build, deploy-dev]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Commit dev.yaml and open the PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.build.outputs.version }}
+        run: bash scripts/open-promotion-pr.sh dev test "$V"

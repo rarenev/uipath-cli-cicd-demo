@@ -1,0 +1,47 @@
+# Reusable: publish a stored package to one tenant and deploy or upgrade it.
+# The job runs in a GitHub environment (dev / test / prod), which holds that tenant's
+# external-app credentials. The prod environment requires a reviewer before this job starts.
+name: deploy
+
+on:
+  workflow_call:
+    inputs:
+      env_name:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.version }} to ${{ inputs.env_name }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env_name }}
+    concurrency: deploy-${{ inputs.env_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-uip
+
+      - name: Fetch the stored package (built once, never rebuilt)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "cicddemo-v${{ inputs.version }}" --pattern "*.zip" --dir out
+          ls -la out
+
+      - name: Publish and deploy
+        env:
+          ENV_NAME: ${{ inputs.env_name }}
+          VERSION: ${{ inputs.version }}
+          PKG_ZIP: out/CicdDemo_${{ inputs.version }}.zip
+          UIP_TENANT: ${{ vars.UIP_TENANT }}
+          UIP_ORG: ${{ vars.UIP_ORG }}
+          UIP_AUTHORITY: ${{ vars.UIP_AUTHORITY }}
+          UIP_SCOPES: ${{ vars.UIP_SCOPES }}
+          UIP_CLIENT_ID: ${{ secrets.UIP_CLIENT_ID }}
+          UIP_CLIENT_SECRET: ${{ secrets.UIP_CLIENT_SECRET }}
+        run: bash scripts/deploy.sh

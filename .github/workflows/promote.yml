@@ -1,0 +1,60 @@
+# Stage 3: a merged promotion PR changed environments/test.yaml or prod.yaml.
+# Deploy that exact version to that tenant. PROD waits for a reviewer on the prod environment.
+name: promote
+
+on:
+  push:
+    branches: [main]
+    paths: ["environments/test.yaml", "environments/prod.yaml"]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      test: ${{ steps.d.outputs.test }}
+      prod: ${{ steps.d.outputs.prod }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: d
+        run: |
+          for env in test prod; do
+            if git diff --name-only HEAD^ HEAD | grep -qx "environments/$env.yaml"; then
+              v=$(sed -nE 's/.*version: "([^"]+)".*/\1/p' "environments/$env.yaml")
+              echo "$env=$v" >> "$GITHUB_OUTPUT"; echo "$env -> $v"
+            fi
+          done
+
+  deploy-test:
+    needs: detect
+    if: needs.detect.outputs.test != ''
+    uses: ./.github/workflows/deploy.yml
+    with:
+      env_name: test
+      version: ${{ needs.detect.outputs.test }}
+    secrets: inherit
+
+  promote-to-prod:
+    name: Open the PROD promotion PR
+    needs: [detect, deploy-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          V: ${{ needs.detect.outputs.test }}
+        run: bash scripts/open-promotion-pr.sh "" prod "$V"
+
+  deploy-prod:
+    needs: detect
+    if: needs.detect.outputs.prod != ''
+    uses: ./.github/workflows/deploy.yml
+    with:
+      env_name: prod
+      version: ${{ needs.detect.outputs.prod }}
+    secrets: inherit

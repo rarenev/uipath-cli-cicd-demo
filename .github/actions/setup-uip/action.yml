@@ -1,0 +1,16 @@
+name: Set up uip CLI
+description: Install Node.js and the pinned UiPath CLI. Tools are fetched on first use at the same 1.204.x line.
+inputs:
+  uip-version:
+    description: "@uipath/cli version. Pin it: tool and CLI versions must match."
+    default: "1.204.0"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+    - shell: bash
+      run: |
+        npm install -g "@uipath/cli@${{ inputs.uip-version }}"
+        uip --version

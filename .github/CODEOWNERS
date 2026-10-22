@@ -1,0 +1,2 @@
+# Production promotions need a platform admin. In the real setup this is a team, e.g. @your-org/rpa-platform-admins.
+/environments/prod.yaml @rarenev

@@ -1,0 +1,14 @@
+[project]
+name = "OrderTriage"
+version = "0.0.1"
+description = "Deterministic order triage agent for the CI/CD demo"
+authors = [{ name = "UiPath TAM demo" }]
+dependencies = [
+    "uipath-langchain>=0.18.0, <0.19.0",
+]
+requires-python = ">=3.11"
+
+[dependency-groups]
+dev = [
+    "uipath-dev>=0.0.86",
+]

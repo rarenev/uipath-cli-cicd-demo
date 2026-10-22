@@ -1,0 +1,58 @@
+# Stage 1: every PR. Blocks the merge on failure.
+name: validate
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  agent:
+    name: Agent smoke test and pack dry run
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - uses: ./.github/actions/setup-uip
+
+      - name: Smoke test the triage rules
+        working-directory: solutions/CicdDemo/OrderTriage
+        run: |
+          uv sync --frozen
+          uv run python ../../../tests/smoke_order_triage.py
+
+      - name: Login as cicd-dev
+        env:
+          UIP_CLIENT_ID: ${{ secrets.UIP_CLIENT_ID }}
+          UIP_CLIENT_SECRET: ${{ secrets.UIP_CLIENT_SECRET }}
+        run: |
+          uip login --authority "${{ vars.UIP_AUTHORITY }}" --organization "${{ vars.UIP_ORG }}" \
+            --tenant "${{ vars.UIP_TENANT }}" --client-id env.UIP_CLIENT_ID \
+            --client-secret env.UIP_CLIENT_SECRET --scope "${{ vars.UIP_SCOPES }}" --output json | jq '{Result, Code}'
+
+      - name: Pack dry run
+        run: uip solution pack solutions/CicdDemo --dry-run --output json | jq '{Result, Code, Message}'
+
+  promotion:
+    name: Promotion PR points at a built version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Every changed environment file names a released version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          changed=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD -- environments/)
+          [ -z "$changed" ] && { echo "No environment files changed."; exit 0; }
+          for f in $changed; do
+            v=$(sed -nE 's/.*version: "([^"]+)".*/\1/p' "$f")
+            echo "$f -> $v"
+            gh release view "cicddemo-v$v" >/dev/null || { echo "::error file=$f::No release cicddemo-v$v. Build it first."; exit 1; }
+          done

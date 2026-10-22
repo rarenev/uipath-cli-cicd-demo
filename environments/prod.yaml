@@ -1,0 +1,6 @@
+# What runs in PROD. Change the version only through a promotion PR.
+# CODEOWNERS requires platform-admin review, and the prod environment requires approval.
+tenant: CicdProd
+parentFolder: Shared
+solutions:
+  CicdDemo: { version: "0.0.0", deployment: CicdDemo-prod }
