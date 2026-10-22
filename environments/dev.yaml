@@ -2,4 +2,4 @@
 tenant: CicdDev
 parentFolder: Shared
 solutions:
-  CicdDemo: { version: "0.0.0", deployment: CicdDemo-dev }
+  CicdDemo: { version: "1.0.3", deployment: CicdDemo-dev }
