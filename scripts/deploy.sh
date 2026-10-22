@@ -30,7 +30,7 @@ echo "::endgroup::"
 
 echo "::group::Deploy or upgrade ${DEPLOYMENT}"
 key=$(uip solution deploy list --limit 200 --output json \
-  --output-filter "[?Name=='${DEPLOYMENT}'].Key | [0]" | jq -r '.Data // empty')
+  | jq -r --arg n "$DEPLOYMENT" '[.Data[] | select(.Name == $n) | .Key] | first // empty')
 
 if [[ -z "$key" ]]; then
   echo "No deployment named ${DEPLOYMENT} yet: creating it (deploy run, first time only)."
